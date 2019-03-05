@@ -1,0 +1,3 @@
+begin program "datascience"
+    files = [ "social.ml" ]
+end

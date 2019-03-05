@@ -9,11 +9,11 @@
 *.cmxa
 
 # ocamlbuild working directory
-_build/
+_obuild/
 
 # ocamlbuild targets
-*.byte
-*.native
+*.byte*
+*.asm*
 
 # oasis generated files
 setup.data
