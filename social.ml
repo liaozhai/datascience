@@ -30,8 +30,18 @@ let print_users users =
 let users_stats =
     Array.map (fun {id; friends} -> id, List.length friends)
 
-(** friend of a friend function stub *)
-let foaf users = ()
+module IntSet = Set.Make(struct let compare = Pervasives.compare type t = int end)
+
+let rec foaf users depth cur acc {id; friends} =
+    if cur < depth then
+        List.fold_left (fun a k ->
+            foaf users depth (cur + 1) a users.(k)
+        ) acc friends
+    else
+        List.fold_left (fun a k ->
+            if not (IntSet.mem k a) then IntSet.add k a
+            else a
+        ) acc friends
     
 let () =
     let users = create_users ["Hero"; "Dunn"; "Sue"; "Chi"; "Thor"; "Clive"; "Hicks"; "Devin"; "Kate"; "Klein"] in
@@ -53,5 +63,13 @@ let () =
         let id, count = stats.(i) in
         printf "id: %d, count: %d" id count;
         print_newline()
-    done;
-    printf "total links = %f, average links = %f" total_links avg_links;;
+    done;    
+    printf "Total links = %f, average links = %f" total_links avg_links;
+    print_newline();
+    printf "Friends of %s" users.(0).name;
+    print_newline();
+    foaf users 1 0 IntSet.empty users.(0)
+    |> IntSet.iter (fun id ->
+        printf "%s" users.(id).name;
+        print_newline()
+    );
